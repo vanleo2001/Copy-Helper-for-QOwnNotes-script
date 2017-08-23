@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Copy Helper for QOwnNotes
 // @description     Helper to convert selected HTML to markdown for next using in QOwnNotes.
-// @version         2.0
+// @version         2.1
 // @author          vanleo2001
 // @license         GPL
 // @include         *
@@ -143,13 +143,25 @@ function closest(el, parentNodeName) {
 	return null;
 }
 
+function getAbsoluteUrl(url) {
+    var a = document.createElement('A');
+    a.href = url;  
+    url = a.href;  
+    return url;
+}
+
+
 options = {
 	gfm: true,
 
 	converters: [{
 			// preserve 'img', so QOwnNotes can download the images and store into local 'media' folder
+			// convert relative path to absolute path, otherwise QOwnNotes will not recognize it.
 			filter: 'img',
 			replacement: function (content, node) {
+				var alt = node.alt;
+				var src = node.getAttribute('src');
+				node.setAttribute('src', getAbsoluteUrl(src));				
 				return this.outer(node, content);
 			}
 		}, {
