@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name            Copy Helper for QOwnNotes
 // @description     Helper to convert selected HTML to markdown for next using in QOwnNotes.
-// @version         2.1
+// @version         2.2
 // @author          vanleo2001
 // @license         GPL
 // @include         *
 // @grant           GM_setClipboard
-// @require         https://raw.githubusercontent.com/vanleo2001/Copy-Helper-for-QOwnNotes-script/master/dist/to-markdown.js
+// @require         https://github.com/domchristie/to-markdown/raw/master/dist/to-markdown.js
+// @require			https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js
 // ==/UserScript==
 
 
@@ -40,6 +41,21 @@ function addParamsToForm(aForm, aKey, aValue) {
 	hiddenField.setAttribute("value", aValue);
 	aForm.appendChild(hiddenField);
 }
+
+window.$ = this.$ = this.jQuery = jQuery.noConflict(true);
+
+$(document).on("mouseup", function(event) {
+  if (event.ctrlKey) {
+	  var range = window.getSelection().getRangeAt(0);
+	fragment = range.cloneContents();
+	span = document.createElement('SPAN');
+	span.appendChild(fragment);
+	content = span.innerHTML;
+	var md = markdownfiy(content);
+	GM_setClipboard(md + '\n\n**From:** ' + document.URL, 'html');
+  }
+
+});
 
 // **** convert from https://github.com/aqxa/atom-to-markdown v3.1.0 released on 5 July, 2017 ****
 
